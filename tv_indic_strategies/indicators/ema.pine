@@ -1,0 +1,34 @@
+//@version=5
+indicator('EMA Cross', overlay=true)
+
+// User input: EMA lengths and source
+ema_01_len = input.int(13, title='Ema 1', step=1)
+ema_02_len = input.int(48, title='Ema 2', step=1)
+ema_03_len = input.int(30, title='Ema 3', step=1)
+ema_04_len = input.int(200, title='Ema 4', step=1)
+
+ema_src = input(title='Source', defval=close)
+
+// Have EMA values calculated
+ema_01 = ta.ema(ema_src, ema_01_len)
+ema_02 = ta.ema(ema_src, ema_02_len)
+ema_03 = ta.ema(ema_src, ema_03_len)
+ema_04 = ta.ema(ema_src, ema_04_len)
+
+//EMAs in chart signs
+plot(ema_01, title='ema_01', color=color.new(#00FF00, 0), style=plot.style_line, linewidth=1)
+plot(ema_02, title='ema_02', color=color.new(#ff0040, 0), style=plot.style_line, linewidth=1)
+plot(ema_03, title='ema_03', color=color.new(#00FF01, 0), style=plot.style_line, linewidth=1)
+plot(ema_04, title='ema_04', color=color.new(#ff0042, 0), style=plot.style_line, linewidth=1)
+
+
+//Cross detect
+cross_01_up = ta.crossover(ema_01, ema_02)
+cross_01_down = ta.crossunder(ema_01, ema_02)
+
+//If cross then draw cross on ema level
+plot(cross_01_up or cross_01_down ? ema_01 : na, style=plot.style_cross, title='cross 01 EMA-Lvl', linewidth=3, color=ema_01 > ema_02 ? color.green : color.red, transp=1)
+
+//If cross, draw cross with text below on the chart
+plotchar(cross_01_up or cross_01_down ? ema_01 : na, title='cross_01 Bottom', char='x', location=location.bottom, color=ema_01 > ema_02 ? color.green : color.red, text='Cross 01', textcolor=ema_01 > ema_02 ? color.green : color.red, transp=5)
+
